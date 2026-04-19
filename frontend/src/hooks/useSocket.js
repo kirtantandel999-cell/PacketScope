@@ -18,7 +18,7 @@ export function useSocket(options = {}) {
   }, [onStatus]);
 
   useEffect(() => {
-    const socket = io("https://aroma-stitch-willow.ngrok-free.dev", {
+    const socket = io(import.meta.env.VITE_API_URL, {
       autoConnect: true,
       reconnection: true,
       reconnectionAttempts: Infinity,

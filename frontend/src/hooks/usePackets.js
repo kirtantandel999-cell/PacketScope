@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const api = axios.create({
-  baseURL: "https://aroma-stitch-willow.ngrok-free.dev/api"
+  baseURL: `${import.meta.env.VITE_API_URL}/api`
 });
 
 export function usePackets(initialFilters = {}, initialLimit = 50) {
