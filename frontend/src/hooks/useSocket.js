@@ -18,7 +18,7 @@ export function useSocket(options = {}) {
   }, [onStatus]);
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", {
+    const socket = io("https://aroma-stitch-willow.ngrok-free.dev", {
       autoConnect: true,
       reconnection: true,
       reconnectionAttempts: Infinity,
