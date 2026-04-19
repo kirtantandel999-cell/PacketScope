@@ -23,7 +23,10 @@ export function useSocket(options = {}) {
       reconnection: true,
       reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
-      transports: ["websocket", "polling"]
+      reconnectionDelayMax: 5000,
+      transports: ["websocket", "polling"],
+      rememberUpgrade: true,
+      upgradeTimeout: 10000
     });
     socketRef.current = socket;
 
