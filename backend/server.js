@@ -12,11 +12,26 @@ import packetRoutes, { setPacketSocket } from "./routes/packets.js";
 
 const app = express();
 const httpServer = createServer(app);
+
+// Configure allowed origins for CORS
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://packetscope-2-qekz.onrender.com",
+  process.env.FRONTEND_URL // Allow custom frontend URL from env
+].filter(Boolean);
+
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"]
-  }
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+    credentials: true
+  },
+  transports: ["websocket", "polling"],
+  allowEIO3: true,
+  pingInterval: 25000,
+  pingTimeout: 60000,
+  upgradeTimeout: 10000
 });
 
 const PORT = Number.parseInt(process.env.PORT || "5000", 10);
@@ -30,7 +45,10 @@ let stderrReader = null;
 
 app.use(
   cors({
-    origin: "http://localhost:5173"
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 app.use(express.json());
