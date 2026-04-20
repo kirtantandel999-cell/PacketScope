@@ -18,16 +18,17 @@ export function useSocket(options = {}) {
   }, [onStatus]);
 
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_API_URL, {
-      autoConnect: true,
-      reconnection: true,
-      reconnectionAttempts: Infinity,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      transports: ["websocket", "polling"],
-      rememberUpgrade: true,
-      upgradeTimeout: 10000
-    });
+const socket = io(import.meta.env.VITE_API_URL, {
+  autoConnect: true,
+  reconnection: true,
+  reconnectionAttempts: Infinity,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+
+  // 🔥 FIX (ngrok compatible)
+  transports: ["polling"],     // 👈 force HTTP
+  upgrade: false               // 👈 disable websocket upgrade
+});
     socketRef.current = socket;
 
     const handleConnect = () => {

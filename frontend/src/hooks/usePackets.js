@@ -2,7 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api`
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
+  headers: {
+    "ngrok-skip-browser-warning": "true"
+  }
 });
 
 export function usePackets(initialFilters = {}, initialLimit = 50) {

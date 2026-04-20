@@ -51,7 +51,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/health")
+      .get("/health")
       .then(({ data }) => {
         setMongoStatus(data.database || "unknown");
       })

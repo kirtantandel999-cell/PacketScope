@@ -1,0 +1,15 @@
+{
+  "name": "packetscope",
+  "version": "1.0.0",
+  "description": "PacketScope - Network Packet Sniffer Application",
+  "scripts": {
+    "build": "cd frontend && npm run build && cd .. && node copy-files.js",
+    "start": "cd backend && npm start",
+    "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "cpy": "^11.1.0"
+  }
+}

@@ -13,7 +13,7 @@ export default function ExportButton() {
     setDidSucceed(false);
 
     try {
-      const response = await axios.get("http://localhost:5000/api/packets/export", {
+      const response = await axios.get("/api/packets/export", {
         responseType: "blob"
       });
 

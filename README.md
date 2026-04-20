@@ -44,7 +44,25 @@ cd frontend
 npm run dev
 ```
 
-Open `http://localhost:5173` in your browser.
+## Production Deployment on Render
+
+### Prerequisites
+- Render account
+- MongoDB database (Render managed or MongoDB Atlas)
+
+### Setup
+1. Clone the repository to your Render account
+2. Set up environment variables in Render dashboard:
+   - `MONGO_URI`: Your MongoDB connection string
+   - `FRONTEND_URL`: Your Render app URL (will be provided after deployment)
+   - `PYTHON_PATH`: `python3`
+3. Deploy using Docker (Render will use the provided Dockerfile)
+
+### Notes
+- **Packet sniffing functionality may not work on Render** due to container security restrictions (requires privileged access for raw sockets)
+- The web dashboard and data visualization will work, but live packet capture is limited
+- For full packet sniffing capabilities, deploy on a VPS with root access or use a local setup
+- MongoDB can be set up as a separate service on Render or use MongoDB Atlas
 
 ## Sudo / Admin Note
 

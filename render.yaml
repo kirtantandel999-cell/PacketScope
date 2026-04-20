@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: packetscope
+    env: docker
+    buildCommand: docker build -t packetscope .
+    startCommand: docker run -p $PORT:5000 packetscope
+    envVars:
+      - key: MONGO_URI
+        fromSecret: mongo-uri
+      - key: FRONTEND_URL
+        fromSecret: frontend-url
+      - key: PYTHON_PATH
+        value: python3
+      - key: VITE_API_URL
+        value: ""
+    healthCheckPath: /health

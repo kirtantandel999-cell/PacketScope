@@ -4,7 +4,8 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 import { useSocket } from "../hooks/useSocket.js";
 
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+axios.defaults.baseURL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "" : "http://localhost:5000");
+axios.defaults.headers.common["ngrok-skip-browser-warning"] = "true";
 
 const MAX_PACKETS = 500;
 const PacketContext = createContext(null);

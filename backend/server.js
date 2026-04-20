@@ -4,6 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { createServer } from "node:http";
 import { execSync, spawn } from "node:child_process";
+import path from "node:path";
 import process from "node:process";
 import readline from "node:readline";
 import { Server as SocketIOServer } from "socket.io";
@@ -43,15 +44,20 @@ let snifferProcess = null;
 let stdoutReader = null;
 let stderrReader = null;
 
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-  })
-);
+const corsOptions = {
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "ngrok-skip-browser-warning"]
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
+app.use(express.static(path.join(process.cwd(), "public")));
+app.options("*", cors(corsOptions));
+app.get("/", (req, res) => {
+  res.send("Backend working");
+});
 
 app.get("/health", (_req, res) => {
   res.json({
@@ -63,6 +69,11 @@ app.get("/health", (_req, res) => {
 
 setPacketSocket(io);
 app.use("/api", packetRoutes);
+
+// Serve React app for all non-API routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "public", "index.html"));
+});
 
 const emitSnifferStatus = (payload) => {
   io.emit("sniffer_status", payload);
