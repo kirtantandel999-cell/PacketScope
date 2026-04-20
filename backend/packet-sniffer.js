@@ -81,14 +81,22 @@ class PacketSniffer extends EventEmitter {
     const packet = {
       id: this.packetCount,
       timestamp: new Date().toISOString(),
-      srcIP: srcIps[Math.floor(Math.random() * srcIps.length)],
-      dstIP: dstIps[Math.floor(Math.random() * dstIps.length)],
+      src_ip: srcIps[Math.floor(Math.random() * srcIps.length)],
+      dst_ip: dstIps[Math.floor(Math.random() * dstIps.length)],
       protocol: protocols[Math.floor(Math.random() * protocols.length)],
-      srcPort: Math.floor(Math.random() * 65535),
-      dstPort: Math.floor(Math.random() * 65535),
+      src_port: Math.floor(Math.random() * 65535),
+      dst_port: Math.floor(Math.random() * 65535),
       length: Math.floor(Math.random() * 1500) + 20,
-      info: `Mock packet #${this.packetCount}`,
-      flagsStr: "SYN, ACK"
+      raw_summary: `Mock packet #${this.packetCount} - ${protocols[Math.floor(Math.random() * protocols.length)]} traffic`,
+      payload_preview: `Sample payload data for packet ${this.packetCount}`,
+      ttl: Math.floor(Math.random() * 128) + 1,
+      flags: {
+        syn: Math.random() > 0.5,
+        ack: Math.random() > 0.5,
+        fin: Math.random() > 0.7,
+        rst: Math.random() > 0.9,
+        psh: Math.random() > 0.6
+      }
     };
 
     this.emit("packet", packet);

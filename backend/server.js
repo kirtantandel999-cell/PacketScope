@@ -9,6 +9,7 @@ import { Server as SocketIOServer } from "socket.io";
 
 import packetRoutes, { setPacketSocket } from "./routes/packets.js";
 import PacketSniffer from "./packet-sniffer.js";
+import Packet from "./models/Packet.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -112,8 +113,28 @@ app.post("/api/sniffer/start", (req, res) => {
     sniffer = new PacketSniffer();
 
     // Set up event listeners
-    sniffer.on("packet", (packet) => {
-      io.emit("packet", packet);
+    sniffer.on("packet", async (packet) => {
+      try {
+        // Store packet in database
+        const packetData = {
+          raw_summary: packet.raw_summary,
+          protocol: packet.protocol,
+          timestamp: packet.timestamp,
+          src_ip: packet.src_ip,
+          dst_ip: packet.dst_ip,
+          src_port: packet.src_port,
+          dst_port: packet.dst_port,
+          length: packet.length,
+          ttl: packet.ttl,
+          flags: packet.flags,
+          payload_preview: packet.payload_preview
+        };
+
+        const savedPacket = await Packet.create(packetData);
+        io.emit("new_packet", savedPacket.toJSON());
+      } catch (error) {
+        console.error("Error storing packet:", error);
+      }
     });
 
     sniffer.on("start", () => {
