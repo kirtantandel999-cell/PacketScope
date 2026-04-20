@@ -1,4 +1,5 @@
 import { Router } from "express";
+import mongoose from "mongoose";
 import Packet from "../models/Packet.js";
 
 const router = Router();
@@ -210,6 +211,11 @@ router.get("/packets/export", async (req, res) => {
 
 router.get("/packets/stats", async (req, res) => {
   try {
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ message: "Database not connected. Please try again later." });
+    }
+
     const filters = buildPacketQuery(req.query);
 
     const [total, byProtocolAgg, topSrcIPsAgg, topDstIPsAgg, avgSizeAgg, packetsPerMinuteAgg] =
@@ -276,6 +282,11 @@ router.get("/packets/stats", async (req, res) => {
 
 router.get("/packets", async (req, res) => {
   try {
+    // Check if database is connected
+    if (mongoose.connection.readyState !== 1) {
+      return res.status(503).json({ message: "Database not connected. Please try again later." });
+    }
+
     const page = normalizePagination(req.query.page, 1);
     const limit = Math.min(normalizePagination(req.query.limit, 25), 100);
     const filters = buildPacketQuery(req.query);
@@ -296,6 +307,7 @@ router.get("/packets", async (req, res) => {
       }
     });
   } catch (error) {
+    console.error("Error fetching packets:", error);
     res.status(500).json({ message: "Failed to fetch packets.", error: error.message });
   }
 });
