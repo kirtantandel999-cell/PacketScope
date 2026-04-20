@@ -1,12 +1,6 @@
 # Use Node.js 18 as base image
 FROM node:18-alpine
 
-# Install Python and pip
-RUN apk add --no-cache python3 py3-pip
-
-# Install scapy for packet sniffing
-RUN pip3 install scapy
-
 # Set working directory
 WORKDIR /app
 
