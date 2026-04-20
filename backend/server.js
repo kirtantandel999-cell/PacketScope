@@ -47,11 +47,49 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization", "ngrok-skip-browser-warning"]
 };
 
+// ============================================
+// UTILITY FUNCTIONS (MUST be before routes)
+// ============================================
+
+const emitSnifferStatus = (payload) => {
+  io.emit("sniffer_status", payload);
+};
+
+const cleanupSnifferResources = () => {
+  if (snifferProcess) {
+    snifferProcess.removeAllListeners();
+  }
+};
+
+const stopSnifferProcess = () => {
+  if (!sniffer.isActive()) {
+    return false;
+  }
+
+  try {
+    sniffer.stop();
+    snifferProcess = null;
+    console.log("Sniffer stopped");
+    emitSnifferStatus({ status: "stopped" });
+    return true;
+  } catch (error) {
+    console.error("Error stopping sniffer:", error.message);
+    return false;
+  }
+};
+
+// ============================================
+// MIDDLEWARE
+// ============================================
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.options("*", cors(corsOptions));
 
-// API Routes - MUST come before catch-all
+// ============================================
+// API ROUTES
+// ============================================
+
 app.get("/", (req, res) => {
   res.send("Backend working");
 });
@@ -133,40 +171,19 @@ app.get("/api/sniffer/interfaces", (_req, res) => {
   }
 });
 
-// Serve static files from public directory
+// ============================================
+// STATIC FILES & SPA CATCH-ALL (must be last)
+// ============================================
+
 app.use(express.static(path.join(process.cwd(), "public")));
 
-// Catch-all for SPA - MUST come last
 app.get("*", (req, res) => {
   res.sendFile(path.join(process.cwd(), "public", "index.html"));
 });
 
-const emitSnifferStatus = (payload) => {
-  io.emit("sniffer_status", payload);
-};
-
-const cleanupSnifferResources = () => {
-  if (snifferProcess) {
-    snifferProcess.removeAllListeners();
-  }
-};
-
-const stopSnifferProcess = () => {
-  if (!sniffer.isActive()) {
-    return false;
-  }
-
-  try {
-    sniffer.stop();
-    snifferProcess = null;
-    console.log("Sniffer stopped");
-    emitSnifferStatus({ status: "stopped" });
-    return true;
-  } catch (error) {
-    console.error("Error stopping sniffer:", error.message);
-    return false;
-  }
-};
+// ============================================
+// WEBSOCKET CONNECTIONS
+// ============================================
 
 io.on("connection", (socket) => {
   socket.emit("sniffer_status", {
@@ -174,12 +191,19 @@ io.on("connection", (socket) => {
   });
 });
 
+// ============================================
+// SHUTDOWN HANDLER
+// ============================================
+
 const shutdown = async () => {
   stopSnifferProcess();
-
   await mongoose.connection.close();
   process.exit(0);
 };
+
+// ============================================
+// DATABASE CONNECTION & SERVER START
+// ============================================
 
 mongoose
   .connect(MONGO_URI)
