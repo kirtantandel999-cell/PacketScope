@@ -205,16 +205,18 @@ const shutdown = async () => {
 // DATABASE CONNECTION & SERVER START
 // ============================================
 
+httpServer.listen(PORT, () => {
+  console.log(`PacketScope backend listening on port ${PORT}`);
+});
+
 mongoose
   .connect(MONGO_URI)
   .then(() => {
-    httpServer.listen(PORT, () => {
-      console.log(`PacketScope backend listening on port ${PORT}`);
-    });
+    console.log("MongoDB connected successfully");
   })
   .catch((error) => {
     console.error("MongoDB connection failed:", error);
-    process.exit(1);
+    // Do not exit the process here so the service can still bind to the port.
   });
 
 process.on("SIGINT", () => {
