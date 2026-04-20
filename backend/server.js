@@ -14,16 +14,11 @@ const app = express();
 const httpServer = createServer(app);
 
 // Configure allowed origins for CORS
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-  "https://packetscope-2-qekz.onrender.com",
-  process.env.FRONTEND_URL // Allow custom frontend URL from env
-].filter(Boolean);
+const allowedOrigins = [process.env.FRONTEND_URL].filter(Boolean);
 
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: allowedOrigins,
+    origin: true,
     methods: ["GET", "POST"],
     credentials: true
   },
@@ -41,7 +36,7 @@ let sniffer = new PacketSniffer();
 let snifferProcess = null;
 
 const corsOptions = {
-  origin: allowedOrigins,
+  origin: true,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "ngrok-skip-browser-warning"]
