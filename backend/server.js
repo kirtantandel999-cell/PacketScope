@@ -18,9 +18,9 @@ const allowedOrigins = [process.env.FRONTEND_URL].filter(Boolean);
 
 const io = new SocketIOServer(httpServer, {
   cors: {
-    origin: true,
+    origin: "*",
     methods: ["GET", "POST"],
-    credentials: true
+    credentials: false
   },
   transports: ["websocket", "polling"],
   allowEIO3: true,
@@ -36,8 +36,8 @@ let sniffer = new PacketSniffer();
 let snifferProcess = null;
 
 const corsOptions = {
-  origin: true,
-  credentials: true,
+  origin: "*",
+  credentials: false,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization", "ngrok-skip-browser-warning"]
 };
