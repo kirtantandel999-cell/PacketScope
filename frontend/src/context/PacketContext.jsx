@@ -4,7 +4,9 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 
 import { useSocket } from "../hooks/useSocket.js";
 
-axios.defaults.baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+// Use same-origin API calls in production (deployed with backend), localhost in development
+const API_BASE_URL = import.meta.env.VITE_API_URL || (import.meta.env.MODE === 'production' ? '' : 'http://localhost:5000');
+axios.defaults.baseURL = API_BASE_URL;
 axios.defaults.headers.common["ngrok-skip-browser-warning"] = "true";
 
 const MAX_PACKETS = 500;
